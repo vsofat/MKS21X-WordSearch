@@ -1,5 +1,6 @@
 import java.util.*; //imports ArrayList, Random,
 import java.io.*;//imports File and FileNotFoundException
+import java.util.Scanner;
 
 public class WordSearch{
 
@@ -13,6 +14,17 @@ public class WordSearch{
      */
   // WordSearch
   public WordSearch(int rows,int cols){
+    try{
+       Scanner in = new Scanner(new File(filename));
+       while(in.hasNext()){
+       String upperWord = in.next().toUpperCase();
+       wordsToAdd.add(upperWord);
+     }
+   }
+   catch (FileNotFoundException e){
+           System.out.println("File not found: " + filename);
+           System.exit(1);
+   }
     data = new char[rows][cols];
     for (int i = 0; i <data.length; i++){
       for (int a = 0; a <data[i].length; a++){
@@ -89,4 +101,6 @@ public class WordSearch{
     return true;
   }
   // same idea as horizontal just a diff direction
+
+  public
 }
