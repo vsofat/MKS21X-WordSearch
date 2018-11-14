@@ -13,7 +13,7 @@ public class WordSearch{
      *@param col is the starting width of the WordSearch
      */
   // WordSearch
-  public WordSearch(int rows,int cols){
+  public WordSearch(int rows,int cols, String filename){
     try{
        Scanner in = new Scanner(new File(filename));
        while(in.hasNext()){
