@@ -1,36 +1,61 @@
-import java.util.*; //imports ArrayList, Random,
+import java.util.*; //imports ArrayList, Random, Scanner
 import java.io.*;//imports File and FileNotFoundException
-import java.util.Scanner;
 
 public class WordSearch{
 
   private char[][]data;
+  private int seed;
+  private Random randgen;
   private int rows;
   private int cols;
+  private ArrayList<String>wordsToAdd; //all words from a text file get added to wordsToAdd, indicating that they have not yet been added
+  private ArrayList<String>wordsAdded; //all words that were successfully added get moved into wordsAdded.
   /**Initialize the grid to the size specified
-     *and fill all of the positions with '_'
-     *@param row is the starting height of the WordSearch
-     *@param col is the starting width of the WordSearch
-     */
+  *and fill all of the positions with '_'
+  *@param row is the starting height of the WordSearch
+  *@param col is the starting width of the WordSearch
+  */
   // WordSearch
   public WordSearch(int rows,int cols, String filename){
     try{
-       Scanner in = new Scanner(new File(filename));
-       while(in.hasNext()){
-       String upperWord = in.next().toUpperCase();
-       wordsToAdd.add(upperWord);
-     }
-   }
-   catch (FileNotFoundException e){
-           System.out.println("File not found: " + filename);
-           System.exit(1);
-   }
+      Scanner in = new Scanner(new File(filename));
+      while(in.hasNext()){
+        String upperWord = in.next().toUpperCase();
+        wordsToAdd.add(upperWord);
+      }
+    }
+    catch (FileNotFoundException e){
+      System.out.println("File not found: " + filename);
+      System.exit(1);
+    }
     data = new char[rows][cols];
     for (int i = 0; i <data.length; i++){
       for (int a = 0; a <data[i].length; a++){
         data[i][a] = '_';
       }
     }
+  }
+  public WordSearch( int rows, int cols, String fileName, int randSeed){
+    data = new char[rows][cols];
+    this.rows = rows;
+    this.cols = cols;
+    this.seed = randseed;
+    clear();
+    wordsToAdd = new ArrayList<String>();
+    randgen = new Random(seed);
+    try{
+        Scanner in = new Scanner(new File(filename));
+        while(in.hasNext()){
+        String upperWord = in.next().toUpperCase();
+        wordsToAdd.add(upperWord);
+      }
+    }
+    catch (FileNotFoundException e){
+      	    System.out.println("File not found: " + filename);
+            System.exit(1);
+  	}
+    addAllWords();
+    fillRest();
   }
   /**Set all values in the WordSearch to underscores'_'*/
   // Clear
@@ -42,31 +67,35 @@ public class WordSearch{
     }
   }
   /**Each row is a new line, there is a space between each letter
-     *@return a String with each character separated by spaces, and rows
-     *separated by newlines.
-     */
+  *@return a String with each character separated by spaces, and rows
+  *separated by newlines.
+  */
   // toString
   public String toString(){
-    String returnValue = "";
-    for (int i = 0; i <data.length; i++){
-      for (int a = 0; a <data[i].length; a++){
-        returnValue += data[i][a] + " " ;
+    String result = "";
+    for (int counter = 0; counter < data.length; counter++) {
+      result += '|'; // Devin helped me debug this
+      for (int counter2 = 0; counter2 < data[counter].length; counter2++) {
+        result += data[counter][counter2] + " ";
       }
-      returnValue += "\n";
+      result += '|';
+      result += "/n";
     }
-    return returnValue;
-  }
+    // result += "\nThe seed you used was " + seed + ".\n"; // seed constructors not added yet
+    return result;
+    }
+
   /**Attempts to add a given word to the specified position of the WordGrid.
-     *The word is added from left to right, must fit on the WordGrid, and must
-     *have a corresponding letter to match any letters that it overlaps.
-     *
-     *@param word is any text to be added to the word grid.
-     *@param row is the vertical locaiton of where you want the word to start.
-     *@param col is the horizontal location of where you want the word to start.
-     *@return true when the word is added successfully. When the word doesn't fit,
-     * or there are overlapping letters that do not match, then false is returned
-     * and the board is NOT modified.
-     */
+  *The word is added from left to right, must fit on the WordGrid, and must
+  *have a corresponding letter to match any letters that it overlaps.
+  *
+  *@param word is any text to be added to the word grid.
+  *@param row is the vertical locaiton of where you want the word to start.
+  *@param col is the horizontal location of where you want the word to start.
+  *@return true when the word is added successfully. When the word doesn't fit,
+  * or there are overlapping letters that do not match, then false is returned
+  * and the board is NOT modified.
+  */
   // Horizontal
   public boolean addWordHorizontal(String word,int row, int col){
     int length = word.length();
@@ -79,16 +108,16 @@ public class WordSearch{
     return true;
   }
   /**Attempts to add a given word to the specified position of the WordGrid.
-     *The word is added from top to bottom, must fit on the WordGrid, and must
-     *have a corresponding letter to match any letters that it overlaps.
-     *
-     *@param word is any text to be added to the word grid.
-     *@param row is the vertical locaiton of where you want the word to start.
-     *@param col is the horizontal location of where you want the word to start.
-     *@return true when the word is added successfully. When the word doesn't fit,
-     *or there are overlapping letters that do not match, then false is returned.
-     *and the board is NOT modified.
-     */
+  *The word is added from top to bottom, must fit on the WordGrid, and must
+  *have a corresponding letter to match any letters that it overlaps.
+  *
+  *@param word is any text to be added to the word grid.
+  *@param row is the vertical locaiton of where you want the word to start.
+  *@param col is the horizontal location of where you want the word to start.
+  *@return true when the word is added successfully. When the word doesn't fit,
+  *or there are overlapping letters that do not match, then false is returned.
+  *and the board is NOT modified.
+  */
   // Vertical
   public boolean addWordVertical(String word,int row, int col){
     int length = word.length();
@@ -105,34 +134,35 @@ public class WordSearch{
   public boolean addWordDiagonal(String word,int row, int col){
     int length = word.length()
     if (row + length > data.length || col + length > data[0].length){
-         return false;
-       } // checks if word fits
+      return false;
+    } // checks if word fits
     for (int i = 0; i < length; i ++){
-       int x = row;
-       int y = col;
-       if (data[x][y] != '_' && data[x][y] != word.charAt(i)){
-           return false;
-       }
-       x++;
-       y++;
-       }
+      int x = row;
+      int y = col;
+      if (data[x][y] != '_' && data[x][y] != word.charAt(i)){
+        return false;
+      }
+      x++;
+      y++;
+    }
     for (int i = 0; i < length; i ++){
-       int x1 = row;
-       int x2 = col;
-       data[x1][x2] = word.charAt(i);
-       x1 ++;
-       x2 ++;
-       }
-       return true;
+      int x1 = row;
+      int x2 = col;
+      data[x1][x2] = word.charAt(i);
+      x1 ++;
+      x2 ++;
+    }
+    return true;
     /**Attempts to add a given word to the specified position of the WordGrid.
-     *The word is added from top left to bottom right, must fit on the WordGrid,
-     *and must have a corresponding letter to match any letters that it overlaps.
-     *
-     *@param word is any text to be added to the word grid.
-     *@param row is the vertical locaiton of where you want the word to start.
-     *@param col is the horizontal location of where you want the word to start.
-     *@return true when the word is added successfully. When the word doesn't fit,
-     *or there are overlapping letters that do not match, then false is returned.
-     */
+    *The word is added from top left to bottom right, must fit on the WordGrid,
+    *and must have a corresponding letter to match any letters that it overlaps.
+    *
+    *@param word is any text to be added to the word grid.
+    *@param row is the vertical locaiton of where you want the word to start.
+    *@param col is the horizontal location of where you want the word to start.
+    *@return true when the word is added successfully. When the word doesn't fit,
+    *or there are overlapping letters that do not match, then false is returned.
+    */
   }
+
 }
