@@ -9,8 +9,8 @@ public class WordSearch{
   private int cols;
   private static boolean key;
   private static int seed;
-  private ArrayList<String>wordsToAdd; //all words from a text file get added to wordsToAdd, indicating that they have not yet been added
-  private ArrayList<String>wordsAdded; //all words that were successfully added get moved into wordsAdded.
+  private ArrayList<String>wordsToAdd; //all words from a text file get added to wordsToAdd that haven't been added yet
+  private ArrayList<String>wordsAdded; //once a word is added it is moved to this ArrayList
   /**Initialize the grid to the size specified
   *and fill all of the positions with '_'
   *@param row is the starting height of the WordSearch
@@ -45,16 +45,16 @@ public class WordSearch{
     wordsToAdd = new ArrayList<String>();
     randgen = new Random(seed);
     try{
-        Scanner in = new Scanner(new File(fileName));
-        while(in.hasNext()){
+      Scanner in = new Scanner(new File(fileName));
+      while(in.hasNext()){
         String upperWord = in.next().toUpperCase();
         wordsToAdd.add(upperWord);
       }
     }
     catch (FileNotFoundException e){
-      	    System.out.println("File not found: " + fileName);
-            System.exit(1);
-  	}
+      System.out.println("File not found: " + fileName);
+      System.exit(1);
+    }
     addAllWords();
     fillRest();
   }
@@ -84,7 +84,7 @@ public class WordSearch{
     }
     result += "\nThe seed you used was " + seed + ".\n"; // seed constructors not added yet
     return result;
-    }
+  }
 
   /**Attempts to add a given word to the specified position of the WordGrid.
   *The word is added from left to right, must fit on the WordGrid, and must
@@ -131,7 +131,7 @@ public class WordSearch{
     return true;
   }
   // same idea as horizontal just a diff direction
-
+  // Diagonal
   public boolean addWordDiagonal(String word,int row, int col){
     int length = word.length();
     if (row + length > data.length || col + length > data[0].length){
@@ -165,5 +165,36 @@ public class WordSearch{
     *or there are overlapping letters that do not match, then false is returned.
     */
   }
-
+  // Add words
+  private boolean addWord(int row, int col, String word, int rIncrement, int cIncrement){
+    if((rIncrement == 0) && (cIncrement == 0)){
+      return false;
+    }
+    try{
+      int r = row;
+      int c = col;
+      for(int counter = 0; counter < word.length(); counter++){
+        if(((data[r][c] != word.charAt(counter)) &&
+        (data[r][c] != '_'))){
+          return false;
+        }
+        if(word.charAt(counter) < 10){
+          return false;
+        }
+        r+= rIncrement;
+        c+= cIncrement;
+      }
+      r = row;
+      c = col;
+      for(int counter = 0; counter < word.length(); counter++){
+        data[r][c] = word.charAt(counter);
+        r+= rIncrement;
+        c+= cIncrement;
+      }
+      return true;
+    }
+    catch(IndexOutOfBoundsException x){
+      return false;
+    }
+  }
 }
