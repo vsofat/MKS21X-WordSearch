@@ -4,10 +4,11 @@ import java.io.*;//imports File and FileNotFoundException
 public class WordSearch{
 
   private char[][]data;
-  private int seed;
   private Random randgen;
   private int rows;
   private int cols;
+  private static boolean key;
+  private static int seed;
   private ArrayList<String>wordsToAdd; //all words from a text file get added to wordsToAdd, indicating that they have not yet been added
   private ArrayList<String>wordsAdded; //all words that were successfully added get moved into wordsAdded.
   /**Initialize the grid to the size specified
@@ -39,19 +40,19 @@ public class WordSearch{
     data = new char[rows][cols];
     this.rows = rows;
     this.cols = cols;
-    this.seed = randseed;
+    this.seed = randSeed;
     clear();
     wordsToAdd = new ArrayList<String>();
     randgen = new Random(seed);
     try{
-        Scanner in = new Scanner(new File(filename));
+        Scanner in = new Scanner(new File(fileName));
         while(in.hasNext()){
         String upperWord = in.next().toUpperCase();
         wordsToAdd.add(upperWord);
       }
     }
     catch (FileNotFoundException e){
-      	    System.out.println("File not found: " + filename);
+      	    System.out.println("File not found: " + fileName);
             System.exit(1);
   	}
     addAllWords();
@@ -79,9 +80,9 @@ public class WordSearch{
         result += data[counter][counter2] + " ";
       }
       result += '|';
-      result += "/n";
+      result += "\n";
     }
-    // result += "\nThe seed you used was " + seed + ".\n"; // seed constructors not added yet
+    result += "\nThe seed you used was " + seed + ".\n"; // seed constructors not added yet
     return result;
     }
 
@@ -132,7 +133,7 @@ public class WordSearch{
   // same idea as horizontal just a diff direction
 
   public boolean addWordDiagonal(String word,int row, int col){
-    int length = word.length()
+    int length = word.length();
     if (row + length > data.length || col + length > data[0].length){
       return false;
     } // checks if word fits
