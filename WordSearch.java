@@ -85,7 +85,9 @@ public class WordSearch{
     result += "\nThe seed you used was " + seed + ".\n"; // seed constructors not added yet
     return result;
   }
-
+  public void printWordList() {
+    System.out.println(wordsAdded + "\n");
+  }
   /**Attempts to add a given word to the specified position of the WordGrid.
   *The word is added from left to right, must fit on the WordGrid, and must
   *have a corresponding letter to match any letters that it overlaps.
@@ -165,6 +167,17 @@ public class WordSearch{
     *or there are overlapping letters that do not match, then false is returned.
     */
   }
+  private boolean fillRest(){
+    String OtherChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(int counter = 0; counter < rows; counter++){
+      for(int counter2 = 0; counter2 < cols; counter2++){
+        if(data[counter][counter2] == '_'){
+          data[counter][counter2] = OtherChars.charAt(randgen.nextInt(OtherChars.length()));
+        }
+      }
+    }
+    return true;
+  }
   // Add words
   private boolean addWord(int row, int col, String word, int rIncrement, int cIncrement){
     if((rIncrement == 0) && (cIncrement == 0)){
@@ -195,6 +208,26 @@ public class WordSearch{
     }
     catch(IndexOutOfBoundsException x){
       return false;
+    }}
+
+private boolean addAllWords(){
+  for (int c = 0; c < wordsToAdd.size(); c++) {
+    String word = wordsToAdd.get(c);
+    boolean pause = false;
+    int counter = 0, randomRows, randomCols, randomRInc, randomCInc;
+    while (!pause && counter <= 300) {
+      randomRows = randgen.nextInt(rows);
+      randomCols = randgen.nextInt(cols);
+      randomCInc = randgen.nextInt(3) - 1;
+      randomRInc = randgen.nextInt(3) - 1;
+      if (addWord(randomRows, randomCols, word, randomRInc, randomCInc)) {
+        wordsToAdd.remove(c);
+        wordsAdded.add(word);
+        pause = true;
+        c -= 1;
+      }
+      counter += 1;
     }
   }
-}
+  return true;
+}}
