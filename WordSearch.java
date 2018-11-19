@@ -24,7 +24,7 @@ public class WordSearch{
     else {
       int rows = 0;
       int cols = 0;
-      seed = (int)(Math.random()*100000);
+      seed = (int)(Math.random()*10000);
       try {
         rows = Integer.valueOf(args[0]);
         cols = Integer.valueOf(args[1]);
