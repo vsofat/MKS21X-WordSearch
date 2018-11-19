@@ -16,6 +16,40 @@ public class WordSearch{
   *@param row is the starting height of the WordSearch
   *@param col is the starting width of the WordSearch
   */
+  public static void main(String[] args) { //main function, allows for user interaction and instructs user on how to use class;
+    String message = "\n Hi! The format of your input was incorrect. Please make sure the format is: java WordSearch [rows columns filename [seed [Key]]].";
+    if (args.length < 3) {
+      System.out.println(message);
+    }
+    else {
+      int rows = 0;
+      int cols = 0;
+      seed = (int)(Math.random()*100000);
+      try {
+        rows = Integer.valueOf(args[0]);
+        cols = Integer.valueOf(args[1]);
+      } catch (IllegalArgumentException e) {
+        System.out.println(message);
+        System.exit(0);
+      }
+      String fileName = args[2];
+      key = false;
+      if (args.length >= 4) {
+        try {
+          seed = Integer.valueOf(args[3]);
+        } catch (IllegalArgumentException e) {
+          System.out.println(message);
+          System.exit(0);
+        }
+      }
+      if (args.length == 5 && args[4].equals("key")) {
+        key = true;
+      }
+      WordSearch wordsearch = new WordSearch(rows, cols, fileName, seed, key);
+      System.out.println(wordsearch);
+      wordsearch.printWordList();
+    }
+  }
   // WordSearch
   public WordSearch(int rows,int cols, String filename){
     try{
@@ -36,27 +70,34 @@ public class WordSearch{
       }
     }
   }
-  public WordSearch( int rows, int cols, String fileName, int randSeed){
+  public WordSearch(int rows, int cols, String filename, int randseed, boolean key){
     data = new char[rows][cols];
     this.rows = rows;
     this.cols = cols;
-    this.seed = randSeed;
+    this.seed = randseed;
+    this.key = key;
     clear();
     wordsToAdd = new ArrayList<String>();
     randgen = new Random(seed);
     try{
-      Scanner in = new Scanner(new File(fileName));
-      while(in.hasNext()){
+        Scanner in = new Scanner(new File(filename));
+        while(in.hasNext()){
         String upperWord = in.next().toUpperCase();
         wordsToAdd.add(upperWord);
       }
     }
     catch (FileNotFoundException e){
-      System.out.println("File not found: " + fileName);
-      System.exit(1);
+      	    System.out.println("File not found: " + filename);
+            System.exit(1);
+  	}
+    if(key){
+      clear();
+      addAllWords();
     }
-    addAllWords();
-    fillRest();
+    else{
+      addAllWords();
+      fillRest();
+    }
   }
   /**Set all values in the WordSearch to underscores'_'*/
   // Clear
@@ -179,8 +220,8 @@ public class WordSearch{
     return true;
   }
   // Add words
-  private boolean addWord(int row, int col, String word, int rIncrement, int cIncrement){
-    if((rIncrement == 0) && (cIncrement == 0)){
+  private boolean addWord(int row, int col, String word, int rInc, int cInc){
+    if((rInc == 0) && (cInc == 0)){
       return false;
     }
     try{
@@ -194,15 +235,15 @@ public class WordSearch{
         if(word.charAt(counter) < 10){
           return false;
         }
-        r+= rIncrement;
-        c+= cIncrement;
+        r+= rInc;
+        c+= cInc;
       }
       r = row;
       c = col;
       for(int counter = 0; counter < word.length(); counter++){
         data[r][c] = word.charAt(counter);
-        r+= rIncrement;
-        c+= cIncrement;
+        r+= rInc;
+        c+= cInc;
       }
       return true;
     }
@@ -210,24 +251,24 @@ public class WordSearch{
       return false;
     }}
 
-private boolean addAllWords(){
-  for (int c = 0; c < wordsToAdd.size(); c++) {
-    String word = wordsToAdd.get(c);
-    boolean pause = false;
-    int counter = 0, randomRows, randomCols, randomRInc, randomCInc;
-    while (!pause && counter <= 300) {
-      randomRows = randgen.nextInt(rows);
-      randomCols = randgen.nextInt(cols);
-      randomCInc = randgen.nextInt(3) - 1;
-      randomRInc = randgen.nextInt(3) - 1;
-      if (addWord(randomRows, randomCols, word, randomRInc, randomCInc)) {
-        wordsToAdd.remove(c);
-        wordsAdded.add(word);
-        pause = true;
-        c -= 1;
+    private boolean addAllWords(){
+      for (int c = 0; c < wordsToAdd.size(); c++) {
+        String word = wordsToAdd.get(c);
+        boolean pause = false;
+        int counter = 0, randomRows, randomCols, randomRInc, randomCInc;
+        while (!pause && counter <= 300) {
+          randomRows = randgen.nextInt(rows);
+          randomCols = randgen.nextInt(cols);
+          randomCInc = randgen.nextInt(3) - 1;
+          randomRInc = randgen.nextInt(3) - 1;
+          if (addWord(randomRows, randomCols, word, randomRInc, randomCInc)) {
+            wordsToAdd.remove(c);
+            wordsAdded.add(word);
+            pause = true;
+            c -= 1;
+          }
+          counter += 1;
+        }
       }
-      counter += 1;
-    }
-  }
-  return true;
-}}
+      return true;
+    }}
