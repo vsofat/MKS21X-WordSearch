@@ -1,6 +1,6 @@
 import java.util.*; //imports ArrayList, Random, Scanner
 import java.io.*;//imports File and FileNotFoundException
-
+// went to Dojo 11/19/18 to fix errors
 public class WordSearch{
 
   private char[][]data;
