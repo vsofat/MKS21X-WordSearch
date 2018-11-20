@@ -53,6 +53,7 @@ public class WordSearch{
   // WordSearch
   public WordSearch(int rows,int cols, String filename){
     wordsToAdd = new ArrayList<String>();
+    wordsAdded = new ArrayList<String>();
     try{
       Scanner in = new Scanner(new File(filename));
       while(in.hasNext()){
@@ -76,6 +77,7 @@ public class WordSearch{
     this.rows = rows;
     this.cols = cols;
     this.seed = randSeed;
+    this.key = key;
     clear();
     wordsToAdd = new ArrayList<String>();
     wordsAdded = new ArrayList<String>();
@@ -91,8 +93,14 @@ public class WordSearch{
       System.out.println("File not found: " + fileName);
       System.exit(1);
     }
-    addAllWords();
-    fillRest();
+    if(key){
+      clear();
+      addAllWords();
+    }
+    else{
+      addAllWords();
+      fillRest();
+    }
   }
   /**Set all values in the WordSearch to underscores'_'*/
   // Clear
@@ -251,7 +259,7 @@ public class WordSearch{
         String word = wordsToAdd.get(c);
         boolean tester = false;
         int counter = 0, randomRows, randomCols, randomRInc, randomCInc;
-        while (!tester && counter <= 300) {
+        while (!tester && counter <= 500) {
           randomRows = randgen.nextInt(rows);
           randomCols = randgen.nextInt(cols);
           randomCInc = randgen.nextInt(3) - 1;
